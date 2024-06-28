@@ -5,6 +5,8 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const db = require('../db'); // Assuming you have a db.js file to handle MySQL connection
 const verifyToken = require('../middlewares/verifyToken');
+const { Restaurant, Product, Order } = require('../dbConnection');
+const verifyUserToken = require('../middlewares/verifyUser');
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
@@ -64,7 +66,7 @@ router.post('/register', upload.single('image'), async(req, res) => {
 	}
 });
 
-router.get('/user-details', verifyToken, async (req, res) => {
+router.get('/user-details', verifyUserToken, async (req, res) => {
     const userId = req.user.userId; // Assumes the token contains the userId
 
     try {
@@ -81,6 +83,48 @@ router.get('/user-details', verifyToken, async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error });
     }
 });
+
+router.get('/products', verifyUserToken, async (req, res) => {
+    try {
+    const products = await Product.findAll({
+        limit: 100
+    });
+
+    res.json({products: products});
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+
+
+router.get('/orders', verifyUserToken, async (req, res) => {
+    const userId = req.userId;
+    try {
+    const orders = await Order.findAll({
+        limit: 100,
+        where: {
+            user_ID: userId
+        }
+    });
+
+    res.json({ orders });
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+
+router.get('/restaurants', verifyUserToken, async (req, res) => {
+    try {
+    const restaurants = await Restaurant.findAll({
+        limit: 100,
+    });
+
+    res.json({ restaurants });
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+
 
 router.use((error, req, res, next) => {
 	console.log(' This is the unexpected field = ->', error.field);

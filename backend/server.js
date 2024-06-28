@@ -8,9 +8,10 @@ const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes')
 const forgotPasswordRoutes = require('./routes/forgotPasswordRoutes');
 const generalRoutes = require('./routes/generalRoutes')
-const chatRoutes = require('./routes/chatRoutes')
+const chatRoutes = require('./routes/chatRoutes');
+const { setUp } = require('./dbConnection');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3010;
 
 app.use(cors({
     origin: 'http://localhost:3000'
@@ -44,3 +45,5 @@ app.use('api/chat', chatRoutes);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+setUp()

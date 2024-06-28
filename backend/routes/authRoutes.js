@@ -50,7 +50,7 @@ router.post('/signin', async (req, res) => {
             console.log('Hashed password from DB:', user.password);
             console.log('Password comparison result:', isValidPassword);
             if (isValidPassword) {
-                const token = jwt.sign({ id: user.id, role: 'user' }, SECRET_KEY, { expiresIn: '24h' });
+                const token = jwt.sign({ id: user.user_ID, role: 'user' }, SECRET_KEY, { expiresIn: '24h' });
                 res.json({ message: 'Login successful', token, role: 'user' });
                 return;
             }
